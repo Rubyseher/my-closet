@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import '../styles/comboSuggestions.css';
 // import shirt from '../../assets/shirt.png'
 
 export default function ComboSuggestions({ imageFile }) {
@@ -71,7 +72,7 @@ export default function ComboSuggestions({ imageFile }) {
 
   const filteredLinks = selectedCategory == "all" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
 
-  const Colorlines = (label, hex) => {
+  const ColorLines = ({label, hex}) => {
     if (!hex) return null;
     return (
       <li className="combo-line">
@@ -81,6 +82,14 @@ export default function ComboSuggestions({ imageFile }) {
       </li>
     );
   };
+
+  const Categorypill = ({label, value, selected, onClick}) =>{
+    return(
+        <button className={"category-pill" + (selected ? "category-pill--active": "")} onClick={() => onClick(value)}>
+            {label}
+        </button>
+    )
+  }
 
   return (
     <div className="combo-container">
@@ -113,11 +122,22 @@ export default function ComboSuggestions({ imageFile }) {
         <div className="details-card">
           {loading && <p className="status-text">Analyzing colours…</p>}
           {error && <p className="status-text error-text">{error}</p>}
-          {
-            combos && <>
-            
+          {combos && (
+            <>
+              <h3 className="section-title">Suggested combinations</h3>
+              <ul className="combos-list">
+                {(combos.triad || []).map((hex) => (
+                  <ColorLines label="Triad" hex={hex} />
+                ))}
+                {(combos.analogous || []).map((hex) => (
+                  <ColorLines label="Analogous" hex={hex} />
+                ))}
+                {(combos.monochrome || []).map((hex) => (
+                  <ColorLines key={hex} label="Monochrome" hex={hex} />
+                ))}
+              </ul>
             </>
-          }
+          )}
         </div>
       </div>
     </div>
