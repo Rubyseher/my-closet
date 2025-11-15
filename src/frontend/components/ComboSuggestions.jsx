@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import '../styles/comboSuggestions.css';
+import "../styles/comboSuggestions.css";
 // import shirt from '../../assets/shirt.png'
 
 export default function ComboSuggestions({ imageFile }) {
@@ -72,7 +72,7 @@ export default function ComboSuggestions({ imageFile }) {
 
   const filteredLinks = selectedCategory == "all" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
 
-  const ColorLines = ({label, hex}) => {
+  const ColorLine = ({ label, hex }) => {
     if (!hex) return null;
     return (
       <li className="combo-line">
@@ -83,13 +83,13 @@ export default function ComboSuggestions({ imageFile }) {
     );
   };
 
-  const Categorypill = ({label, value, selected, onClick}) =>{
-    return(
-        <button className={"category-pill" + (selected ? "category-pill--active": "")} onClick={() => onClick(value)}>
-            {label}
-        </button>
-    )
-  }
+  const CategoryPill = ({ label, value, selected, onClick }) => {
+    return (
+      <button type="button" className={"category-pill" + (selected ? "category-pill--active" : "")} onClick={() => onClick(value)}>
+        {label}
+      </button>
+    );
+  };
 
   return (
     <div className="combo-container">
@@ -126,17 +126,42 @@ export default function ComboSuggestions({ imageFile }) {
             <>
               <h3 className="section-title">Suggested combinations</h3>
               <ul className="combos-list">
-                {(combos.triad || []).map((hex) => (
-                  <ColorLines label="Triad" hex={hex} />
+                {(combos.bottoms || []).map((hex) => (
+                  <ColorLine key={`bottom-${hex}`} label="Bottoms" hex={hex} />
                 ))}
-                {(combos.analogous || []).map((hex) => (
-                  <ColorLines label="Analogous" hex={hex} />
+
+                {(combos.shoes || []).map((hex) => (
+                  <ColorLine key={`shoe-${hex}`} label="Shoes" hex={hex} />
                 ))}
-                {(combos.monochrome || []).map((hex) => (
-                  <ColorLines key={hex} label="Monochrome" hex={hex} />
+
+                {(combos.accents || []).map((hex) => (
+                  <ColorLine key={`accent-${hex}`} label="Accent" hex={hex} />
                 ))}
               </ul>
             </>
+          )}
+
+          {/* 🔽 NEW: Myntra section */}
+          {myntraLinks.length > 0 && (
+            <div className="myntra-section">
+              <h3 className="section-title">Shop matching pieces</h3>
+
+              <div className="pill-row">
+                <CategoryPill label="All" value="all" selected={selectedCategory === "all"} onClick={setSelectedCategory} />
+                <CategoryPill label="Tops" value="tops" selected={selectedCategory === "tops"} onClick={setSelectedCategory} />
+                <CategoryPill label="Bottoms" value="bottoms" selected={selectedCategory === "bottoms"} onClick={setSelectedCategory} />
+                <CategoryPill label="Dresses" value="dresses" selected={selectedCategory === "dresses"} onClick={setSelectedCategory} />
+              </div>
+
+              <div className="myntra-list">
+                {filteredLinks.map((item) => (
+                  <a key={item.url} href={item.url} target="_blank" rel="noreferrer" className="myntra-card">
+                    <p className="myntra-title">{item.title}</p>
+                    {item.category && <span className="myntra-category-tag">{item.category}</span>}
+                  </a>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>
