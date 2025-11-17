@@ -15,7 +15,7 @@ function DragDrop() {
       <div className="upload-container">
         <div className="upload-box">
           <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
-          <p>JPG, PNG, or GIF only pls</p>
+          <p>JPG, PNG, or GIF only</p>
         </div>
       </div>
         {file && <ComboSuggestions imageFile={file}/>}

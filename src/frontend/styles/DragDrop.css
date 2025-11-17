@@ -2,13 +2,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh; /* centers vertically */
+  margin-top: 50px;
+  height: 40vh; /* centers vertically */
+}
+.upload-box .hDEoCR {
+  border: 2px dashed #000 !important;
 }
 
 .upload-box {
   width: 400px;
   height: 250px;
-  border: 2px dashed #1976d2; /* blue outline */
+  border: 2px dashed #000000; /* blue outline */
   border-radius: 10px;
   background-color: #f9f9f9;
   display: flex;
