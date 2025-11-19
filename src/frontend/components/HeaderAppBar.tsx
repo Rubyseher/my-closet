@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShirt, faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faShirt } from "@fortawesome/free-solid-svg-icons";
 
 const pages = ["Home", "Github"];
 const settings = ["Profile"];

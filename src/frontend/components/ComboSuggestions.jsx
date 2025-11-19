@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "../styles/comboSuggestions.css";
 import ColorPalette from "./ColorPalette";
 import ClothingLinks from "./ClothingLinks";
-// import shirt from '../../assets/shirt.png'
 
 export default function ComboSuggestions({ imageFile }) {
   const [imageUrl, setImageUrl] = useState(null);

@@ -1,8 +1,12 @@
+@import "tailwindcss";
 :root {
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
-
 body {
- margin: 0; font-family: system-ui, sans-serif;
+  margin: 0;
+  background-color: #f4f6fa;
+  /* font-family:  "SF Pro Display", -apple-system, BlinkMacSystemFont, Inter, sans-serif; */
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
 }
