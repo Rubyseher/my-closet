@@ -12,8 +12,8 @@ function DragDrop() {
 
   return (
     <div>
-      <div className="upload-container">
-        <div className="upload-box -mt-12 w-4xl">
+      <div className="upload-container px-8 sm:px-0">
+        <div className="upload-box -mt-40 sm:-mt-12 w-[900px]">
           <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
         </div>
       </div>
