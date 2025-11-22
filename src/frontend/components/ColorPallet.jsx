@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "../styles/comboSuggestions.css";
-import ToggleButtons from "./ToggleButtons";
-import MenWomanToggle from "./MenWomanToggle";
+import ToggleButtons from "./Utilities/ToggleButtons";
+import MenWomanToggle from "./Utilities/MenWomanToggle";
 
-export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
+export default function ColorPallet({ loading, error, combos, myntraLinks }) {
   const [selectedCategory, setSelectedCategory] = useState("tops");
   const filteredLinks = selectedCategory == "all" ? myntraLinks : myntraLinks.filter((l) => l.category === selectedCategory);
   const ColorLine = ({ label, name, hex }) => {
@@ -14,14 +14,6 @@ export default function ClothingLinks({ loading, error, combos, myntraLinks }) {
         <span className="combo-chip" style={{ backgroundColor: hex }}></span>
         <span className="combo-hex">{name}</span>
       </li>
-    );
-  };
-
-  const CategoryPill = ({ label, value, selected, onClick }) => {
-    return (
-      <button type="button" className={"category-pill" + (selected ? "category-pill--active" : "")} onClick={() => onClick(value)}>
-        {label}
-      </button>
     );
   };
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/comboSuggestions.css";
-import ColorPalette from "./ColorPalette";
-import ClothingLinks from "./ClothingLinks";
+import DominantColor from "./DominantColor";
+import ColorPallet from "./ColorPallet";
 
 export default function ComboSuggestions({ imageFile }) {
   const [imageUrl, setImageUrl] = useState(null);
@@ -78,10 +78,10 @@ export default function ComboSuggestions({ imageFile }) {
 
       <div className="combo-layout">
         {/* LEFT SIDE: image + palette */}
-        <ColorPalette imageUrl={imageUrl} dominant={dominant} palette={palette} />
+        <DominantColor imageUrl={imageUrl} dominant={dominant} palette={palette} />
 
         {/* RIGHT SIDE: combos + Myntra */}
-        <ClothingLinks loading={loading} error={error} suggestions={suggestions} combos={combos} myntraLinks={myntraLinks}/>
+        <ColorPallet loading={loading} error={error} suggestions={suggestions} combos={combos} myntraLinks={myntraLinks}/>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import DragDrop from "../components/DragDrop";
-import ResponsiveDrawer from "../components/ResponsiveDrawer";
+import DragDrop from "../components/Utilities/DragDrop";
+import ResponsiveDrawer from "../components/Utilities/ResponsiveDrawer";
 
 export default function Trial() {
   return (

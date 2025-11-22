@@ -1,6 +1,6 @@
 import "../styles/comboSuggestions.css";
 
-export default function ColorPalette({ imageUrl, dominant, palette }) {
+export default function DominantColor({ imageUrl, dominant, palette }) {
   return (
     <div className="preview-card">
       {imageUrl && <img src={imageUrl} alt="Uploaded clothing" className="preview-image" />}
