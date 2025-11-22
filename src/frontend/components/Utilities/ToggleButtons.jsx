@@ -2,18 +2,19 @@ import * as React from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
-export default function ToggleButtons({value,onChange}) {
-  console.log("value is",value)
+export default function ToggleButtons({ selectedCategory, onChange }) {
+  console.log("selectedCategory is", selectedCategory);
 
   const handleAlignment = (event, newAlignment) => {
-    if(newAlignment!==null && onChange)
-      console.log("newAlignment", newAlignment)
-      onChange(newAlignment)
+    if (newAlignment !== null && onChange) {
+      console.log("newAlignment", newAlignment);
+      onChange(newAlignment);
+    }
   };
 
   return (
     <ToggleButtonGroup
-      value={value}
+      value={selectedCategory}
       exclusive
       onChange={handleAlignment}
       aria-label="text alignment"
@@ -54,9 +55,6 @@ export default function ToggleButtons({value,onChange}) {
       </ToggleButton>
       <ToggleButton value="shoes" aria-label="shoes">
         Shoes
-      </ToggleButton>
-      <ToggleButton value="accents" aria-label="accents">
-        Accents
       </ToggleButton>
     </ToggleButtonGroup>
   );
