@@ -29,28 +29,24 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
       .resize({ width: 512, withoutEnlargement: true })
       .toBuffer();
 
-    const palette = await Vibrant.from(thumbBuf).getPalette();
 
-    const hexes =  []; 
+    const hexes = [];
 
     // ---- NEW DOMINANT LOGIC ----
-    const mainSwatch =
-      palette.Vibrant ||
-      palette.Muted ||
-      palette.DarkVibrant ||
-      palette.LightVibrant ||
-      Object.values(palette)[0];
+    const palette = await Vibrant.from(thumbBuf).getPalette();
 
-    const dominant = swatchToHex(mainSwatch);
+    const mainSwatch = pickDominantSwatch(palette);
+    const dominant = swatchToHex(mainSwatch) || "#808080";
+
     // CLEAN HEX for API
-const cleanHex = dominant.replace("#", "");
+    const cleanHex = dominant.replace("#", "");
 
-// HIT TheColorAPI
-const schemeRes = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=triad&count=5`);
-const schemeData = await schemeRes.json();
+    // HIT TheColorAPI
+    const schemeRes = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=triad&count=5`);
+    const schemeData = await schemeRes.json();
 
-// EXTRACT hexes only
-const colorApiPalette = schemeData.colors.map(c => c.hex.value);
+    // EXTRACT hexes only
+    const colorApiPalette = schemeData.colors.map(c => c.hex.value);
 
 
     // ---- NEW FASHION COMBOS ----
@@ -77,6 +73,16 @@ const colorApiPalette = schemeData.colors.map(c => c.hex.value);
 
 // 4) JSON parsing AFTER file uploads
 app.use(express.json());
+
+function pickDominantSwatch(palette) {
+  const swatches = Object.values(palette).filter(Boolean);
+  if (!swatches.length) return null;
+
+  return swatches.reduce((best, s) => {
+    if (!best) return s;
+    return s.population > best.population ? s : best;
+  }, null);
+}
 
 // --- helper functions ---
 function swatchToHex(s) {
@@ -163,6 +169,35 @@ function fashionCombosFrom(hex, gender = "women") {
     "#e5e7eb", // light grey
     "#f5f5f4", // warm off-white
     "#d1b892", // beige
+  ];
+  // --- TOPS LOGIC ---
+  const TOP_NEUTRALS = [
+    "#ffffff",   // white
+    "#f5f5f4",   // off-white
+    "#e5e7eb",   // light grey
+    "#111827",   // black
+  ];
+
+  const harmoniousTop = base
+    .clone()
+    .lighten(20)
+    .desaturate(20)
+    .toHexString();
+
+  const contrastTop = base
+    .clone()
+    .complement()
+    .desaturate(20)
+    .lighten(5)
+    .toHexString();
+
+  const mutedEarthTop = tinycolor.mix(base, "#c4a484", 40).toHexString(); // beige/sand mix
+
+  const tops = [
+    ...TOP_NEUTRALS.map((h) => ({ hex: h, name: simpleColorName(h) })),
+    { hex: harmoniousTop, name: simpleColorName(harmoniousTop) },
+    { hex: contrastTop, name: simpleColorName(contrastTop) },
+    { hex: mutedEarthTop, name: simpleColorName(mutedEarthTop) },
   ];
 
   // --- BOTTOMS LOGIC ---
@@ -251,7 +286,7 @@ function fashionCombosFrom(hex, gender = "women") {
   ];
 
   return {
-    tops: [], // you can fill this later if needed
+    tops, // you can fill this later if needed
     bottoms,
     shoes,
     accents,
