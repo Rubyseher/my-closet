@@ -29,7 +29,6 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
       .resize({ width: 512, withoutEnlargement: true })
       .toBuffer();
 
-
     const hexes = [];
 
     // ---- NEW DOMINANT LOGIC ----
@@ -47,7 +46,6 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
 
     // EXTRACT hexes only
     const colorApiPalette = schemeData.colors.map(c => c.hex.value);
-
 
     // ---- NEW FASHION COMBOS ----
     const combos = fashionCombosFrom(dominant, "women");

@@ -10,6 +10,15 @@ function pickDominantSwatch(palette) {
   }, null);
 }
 
+function fetchColorSchemes(cleanHex) {
+  let COLOR_API_MODES = ["monochrome", "monochrome-dark", "monochrome-light", "analogic", "complement", "analogic-complement", "triad", "quad"]
+  COLOR_API_MODES.forEach((item, index) => {
+    const schemeRes = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=${item}&count=5`);
+    const schemeData = await schemeRes.json();
+    
+  })
+}
+
 // --- helper functions ---
 function swatchToHex(s) {
   if (!s) return null;
@@ -238,4 +247,4 @@ function buildMyntraLinks(hex, gender = "women") {
     },
   ];
 }
-export { pickDominantSwatch, swatchToHex, fashionCombosFrom, buildMyntraLinks };
+export { pickDominantSwatch, swatchToHex, fashionCombosFrom, buildMyntraLinks, fetchColorSchemes };
