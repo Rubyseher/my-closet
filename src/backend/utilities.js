@@ -23,26 +23,26 @@ function pickDominantSwatch(palette) {
 async function fetchColorSchemes(hex, modes = COLOR_API_MODES, count = 5) {
   const cleanHex = hex.replace("#", "");
 
-  const getAllColorAPIData = await Promise.all(
+  const getAllColorAPIData = await Promise.allSettled(
     modes.map(async (mode) => {
       const res = await fetch(`https://www.thecolorapi.com/scheme?hex=${cleanHex}&mode=${mode}&count=5`);
 
       if (!res.ok) throw new Error(`color api mode failed: ${mode}`)
       const data = await res.json()
-      console.log(data);
+      // console.log(data);
 
       const extractedColors = (data.colors || []).map((color) => color.hex.value)
-      console.log(extractedColors);
+      // console.log(extractedColors);
 
       return { mode,extractedColors };
     })
   )
 
-  const finalColors = getAllColorAPIData.reduce((colors,{mode,extractedColors}) => {
-    colors[mode]=extractedColors
+  const finalColors = getAllColorAPIData.reduce((colors,result, index) => {
+    const mode= modes[index]
     return colors
   },{})
-  console.log(finalColors)
+  // console.log(finalColors)
   return finalColors
 
 }
