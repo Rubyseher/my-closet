@@ -22,7 +22,7 @@ export default function ToggleButtons({ value , options=[], onChange }) {
       aria-label="text alignment"
       sx={{
         borderRadius: "99px",
-        backgroundColor: "#f3f4f6",
+        // backgroundColor: "#f3f4f6",
         padding: "4px",
         // remove the default group borders
         "& .MuiToggleButtonGroup-grouped": {
@@ -49,11 +49,11 @@ export default function ToggleButtons({ value , options=[], onChange }) {
       }}
       // style={{marginTop:'10px', borderRadius:'30px'}}
     >
-      {options.map((item) => {
+      {options.map((item) => (
         <ToggleButton key={item.value}  value={item.value} aria-label={item.label}>
           {item.label}
-        </ToggleButton>;
-      })}
+        </ToggleButton>
+      ))}
     </ToggleButtonGroup>
   );
 }

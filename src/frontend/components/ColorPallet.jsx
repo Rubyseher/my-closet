@@ -3,8 +3,25 @@ import "../styles/comboSuggestions.css";
 import ToggleButtons from "./Utilities/ToggleButtons";
 import MenWomanToggle from "./Utilities/MenWomanToggle";
 
-export default function ColorPallet({ loading, error, neutrals, myntraLinks,colorApiPalette }) {
+export default function ColorPallet({ loading, error, neutrals, myntraLinks, colorApiPalette }) {
   const [selectedCategory, setSelectedCategory] = useState("shoes");
+  const [selectedMode, setSelectedMode] = useState("analogic");
+
+  const categoryOptions = [
+    { value: "tops", label: "Tops" },
+    { value: "bottoms", label: "Bottoms" },
+    { value: "shoes", label: "Shoes" },
+  ];
+  const modeOptions = [
+    { value: "analogic", label: "Analog" },
+    { value: "monochrome", label: "Monochrome" },
+    { value: "quad", label: "Quad" },
+    { value: "monochrome-dark", label: "Mono Dark" },
+    { value: "monochrome-light", label: "Mono Light" },
+    { value: "complement", label: "Complement" },
+    { value: "analogic-complement", label: "Analog Complement" },
+  ];
+
   const filteredLinks = myntraLinks.filter((l) => l.category === selectedCategory);
   const ColorLine = ({ name, hex }) => {
     if (!name) return null;
@@ -16,11 +33,6 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks,colo
     );
   };
 
-  const handleSelectedCategory = (v) => {
-    console.log("in handleSelectedCategory ",v);
-    setSelectedCategory(v);
-  };
-
   return (
     <>
       <div className="details-card">
@@ -29,7 +41,7 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks,colo
         {neutrals && (
           <>
             <div className="flex mt-2.5">
-              <ToggleButtons selectedCategory={selectedCategory} onChange={(v) => handleSelectedCategory(v)} />
+              <ToggleButtons value={selectedCategory} options={categoryOptions} onChange={(v) => setSelectedCategory(v)} />
               <MenWomanToggle sx={{ m: 1 }} defaultChecked />
             </div>
 
@@ -48,7 +60,10 @@ export default function ColorPallet({ loading, error, neutrals, myntraLinks,colo
         {/* 🔽 NEW: Myntra section */}
         {myntraLinks.length > 0 && (
           <div className="myntra-section ">
-            <h3 className="section-title">More Combinations</h3>
+            <h3 className="section-title">
+              More Combinations
+              <ToggleButtons value={selectedMode} options={modeOptions} onChange={(v) => setSelectedMode(v)} />
+            </h3>
           </div>
         )}
       </div>
