@@ -40,6 +40,9 @@ async function fetchColorSchemes(hex, modes = COLOR_API_MODES, count = 5) {
 
   const finalColors = getAllColorAPIData.reduce((colors,result, index) => {
     const mode= modes[index]
+    if(result.status=="fulfilled")
+      colors[mode]= result.value.extractedColors
+    else colors[mode]=[]
     return colors
   },{})
   // console.log(finalColors)

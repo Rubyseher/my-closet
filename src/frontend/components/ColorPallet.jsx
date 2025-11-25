@@ -34,7 +34,7 @@ export default function ColorPallet({ loading, error, combos, myntraLinks }) {
               <MenWomanToggle sx={{ m: 1 }} defaultChecked />
             </div>
 
-            <h3 className="section-title">Suggested combinations</h3>
+            <h3 className="section-title">Neutrals</h3>
             {selectedCategory && (
               <ul className="combos-list">
                 {(combos[selectedCategory] || []).map((item) => (
@@ -49,7 +49,7 @@ export default function ColorPallet({ loading, error, combos, myntraLinks }) {
         {/* 🔽 NEW: Myntra section */}
         {myntraLinks.length > 0 && (
           <div className="myntra-section">
-            <h3 className="section-title">Shop matching pieces</h3>
+            <h3 className="section-title">More Combinations</h3>
 
             <div className="myntra-list">
               {filteredLinks.map((item) => (

@@ -82,6 +82,7 @@ export default function ComboSuggestions({ imageFile }) {
 
         {/* RIGHT SIDE: combos + Myntra */}
         <ColorPallet loading={loading} error={error} suggestions={suggestions} combos={combos} myntraLinks={myntraLinks}/>
+      
       </div>
     </div>
   );
