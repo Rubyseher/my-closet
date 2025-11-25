@@ -27,6 +27,9 @@
   background: #f9fafb;
 }
 
+.details-card--full{
+    grid-column: 1 / -1;
+}
 .preview-image {
   width: 100%;
   margin-top: 10px;

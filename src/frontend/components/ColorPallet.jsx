@@ -3,7 +3,7 @@ import "../styles/comboSuggestions.css";
 import ToggleButtons from "./Utilities/ToggleButtons";
 import MenWomanToggle from "./Utilities/MenWomanToggle";
 
-export default function ColorPallet({ loading, error, combos, myntraLinks }) {
+export default function ColorPallet({ loading, error, neutrals, myntraLinks }) {
   const [selectedCategory, setSelectedCategory] = useState("shoes");
   const filteredLinks = myntraLinks.filter((l) => l.category === selectedCategory);
   const ColorLine = ({ label, name, hex }) => {
@@ -27,7 +27,7 @@ export default function ColorPallet({ loading, error, combos, myntraLinks }) {
       <div className="details-card">
         {loading && <p className="status-text">Analyzing colours…</p>}
         {error && <p className="status-text error-text">{error}</p>}
-        {combos && (
+        {neutrals && (
           <>
             <div className="flex mt-2.5">
               <ToggleButtons selectedCategory={selectedCategory} onChange={(v) => handleSelectedCategory(v)} />
@@ -37,7 +37,7 @@ export default function ColorPallet({ loading, error, combos, myntraLinks }) {
             <h3 className="section-title">Neutrals</h3>
             {selectedCategory && (
               <ul className="combos-list">
-                {(combos[selectedCategory] || []).map((item) => (
+                {(neutrals[selectedCategory] || []).map((item) => (
                   <ColorLine key={`${selectedCategory}-${item.hex}`} label={`${selectedCategory}`} name={item.name} hex={item.hex} />
                 ))}
               </ul>
@@ -45,10 +45,27 @@ export default function ColorPallet({ loading, error, combos, myntraLinks }) {
           </>
         )}
       </div>
-      <div className="details-card">
+      <div className="details-card details-card--full">
         {/* 🔽 NEW: Myntra section */}
         {myntraLinks.length > 0 && (
-          <div className="myntra-section">
+          <div className="myntra-section ">
+            <h3 className="section-title">More Combinations</h3>
+
+            <div className="myntra-list">
+              {filteredLinks.map((item) => (
+                <a key={item.url} href={item.url} target="_blank" rel="noreferrer" className="myntra-card">
+                  <p className="myntra-title">{item.title}</p>
+                  {item.category && <span className="myntra-category-tag">{item.category}</span>}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="details-card details-card--full">
+        {/* 🔽 NEW: Myntra section */}
+        {myntraLinks.length > 0 && (
+          <div className="myntra-section ">
             <h3 className="section-title">More Combinations</h3>
 
             <div className="myntra-list">

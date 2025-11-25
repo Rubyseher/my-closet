@@ -10,7 +10,7 @@ export default function ComboSuggestions({ imageFile }) {
   const [suggestions, setSuggestions] = useState([]);
   const [dominant, setDominant] = useState(null);
   const [palette, setPalette] = useState([]);
-  const [combos, setCombos] = useState(null);
+  const [neutrals, setNeutrals] = useState(null);
   const [myntraLinks, setMyntraLinks] = useState([]);
 
   // 1) Preview effect
@@ -33,7 +33,7 @@ export default function ComboSuggestions({ imageFile }) {
       setSuggestions([]);
       setDominant(null);
       setPalette([]);
-      setCombos(null);
+      setNeutrals(null);
       setMyntraLinks([]);
 
       try {
@@ -56,7 +56,7 @@ export default function ComboSuggestions({ imageFile }) {
 
         setDominant(data.dominantColor);
         setPalette(Array.isArray(data.palette) ? data.palette : []);
-        setCombos(data.combos || null);
+        setNeutrals(data.combos || null);
         console.log("combo is ", data.combos || null);
 
         setMyntraLinks(Array.isArray(data.myntra) ? data.myntra : []);
@@ -81,7 +81,7 @@ export default function ComboSuggestions({ imageFile }) {
         <DominantColor imageUrl={imageUrl} dominant={dominant} palette={palette} />
 
         {/* RIGHT SIDE: combos + Myntra */}
-        <ColorPallet loading={loading} error={error} suggestions={suggestions} combos={combos} myntraLinks={myntraLinks}/>
+        <ColorPallet loading={loading} error={error} suggestions={suggestions} neutrals={neutrals} myntraLinks={myntraLinks}/>
       
       </div>
     </div>
