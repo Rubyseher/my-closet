@@ -15,6 +15,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShirt } from "@fortawesome/free-solid-svg-icons";
+import logo from "../../../assets/attiro.png"
 
 const drawerWidth = 200;
 
@@ -74,8 +75,8 @@ function ResponsiveDrawer(props) {
           <Typography variant="h6" noWrap component="div">
             <Box
               sx={{
-                width: "30px",
-                height: "30px",
+                width: 40,
+                height: 40,
                 backgroundColor: "white",
                 display: "flex",
                 mr: 2,
@@ -84,7 +85,11 @@ function ResponsiveDrawer(props) {
                 justifyContent: "center",
               }}
             >
-              <FontAwesomeIcon icon={faShirt} style={{ color: "black" }} />
+              <img
+                src={logo}
+                alt="Attiro logo"
+                style={{padding:'6px'}}
+              />
             </Box>
           </Typography>
           <Typography sx={{fontWeight:800, fontFamily:"-apple-system"}}>
