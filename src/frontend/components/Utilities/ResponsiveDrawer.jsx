@@ -14,13 +14,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo from "../../../assets/attiro.png"
+import logo from "../../../assets/attiro.png";
+import useClosetHistory  from "./useClosetHistory";
 
 const drawerWidth = 200;
 function ResponsiveDrawer(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const { history } = useClosetHistory();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -38,17 +40,64 @@ function ResponsiveDrawer(props) {
   };
 
   const drawer = (
-    <div class="text-white">
+    <div className="text-white">
       <Toolbar />
       <Divider />
       <List>
-        {["History 1", "History 2", "History 3", "History 4"].map((text) => (
+        {/* {["History 1", "History 2", "History 3", "History 4"].map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemText primary={text} />
             </ListItemButton>
           </ListItem>
-        ))}
+        ))} */}
+        {history.length === 0 ? (
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemText primary="History" />
+            </ListItemButton>
+          </ListItem>
+        ) : (
+          history.map((item) => (
+            <ListItem key={item.id} disablePadding>
+              <ListItemButton onClick={() => console.log("select history", item)}>
+                <Box
+                  sx={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 1,
+                    overflow: "hidden",
+                    mr: 1,
+                    backgroundColor: "#2a2a2a",
+                    border: "1px solid #333",
+                  }}
+                >
+                  {item.imageSrc ? (
+                    <img src={item.imageSrc} alt={item.label || "History item"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : null}
+                </Box>
+                <ListItemText
+                  primary={item.label || "Unnamed upload"}
+                  secondary={new Date(item.createdAt).toLocaleString()}
+                  primaryTypographyProps={{ noWrap: true }}
+                  secondaryTypographyProps={{ noWrap: true }}
+                />
+                {item.dominantColor ? (
+                  <Box
+                    sx={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: "50%",
+                      backgroundColor: item.dominantColor,
+                      border: "1px solid #444",
+                      ml: 1,
+                    }}
+                  />
+                ) : null}
+              </ListItemButton>
+            </ListItem>
+          ))
+        )}
       </List>
     </div>
   );
@@ -83,16 +132,10 @@ function ResponsiveDrawer(props) {
                 justifyContent: "center",
               }}
             >
-              <img
-                src={logo}
-                alt="Attiro logo"
-                style={{padding:'6px'}}
-              />
+              <img src={logo} alt="Attiro logo" style={{ padding: "6px" }} />
             </Box>
           </Typography>
-          <Typography sx={{fontWeight:800, fontFamily:"-apple-system"}}>
-            ATTIRO
-          </Typography>
+          <Typography sx={{ fontWeight: 800, fontFamily: "-apple-system" }}>ATTIRO</Typography>
         </Toolbar>
       </AppBar>
       <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
