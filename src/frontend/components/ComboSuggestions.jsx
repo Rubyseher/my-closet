@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../styles/comboSuggestions.css";
 import DominantColor from "./DominantColor";
 import ColorPallet from "./ColorPallet";
+import useClosetHistory from "./Utilities/useClosetHistory";
 
 export default function ComboSuggestions({ imageFile }) {
   const [imageUrl, setImageUrl] = useState(null);
@@ -12,6 +13,7 @@ export default function ComboSuggestions({ imageFile }) {
   const [palette, setPalette] = useState([]);
   const [neutrals, setNeutrals] = useState(null);
   const [myntraLinks, setMyntraLinks] = useState([]);
+  const { addHistory } = useClosetHistory();
 
   // 1) Preview effect
   useEffect(() => {
@@ -55,11 +57,20 @@ export default function ComboSuggestions({ imageFile }) {
         if (!res.ok) throw new Error(data.error || `Http.${res.status}`);
 
         setDominant(data.dominantColor);
-        setColorApiPalette(data.colorApiPalette || {})
+        setColorApiPalette(data.colorApiPalette || {});
         setPalette(Array.isArray(data.palette) ? data.palette : []);
         setNeutrals(data.combos || null);
-
         setMyntraLinks(Array.isArray(data.myntra) ? data.myntra : []);
+
+        const id = (crypto?.randomUUID && crypto.randomUUID()) || `${imageFile.name}-${imageFile.lastModified}`;
+
+        addHistory({
+          id,
+          label: imageFile.name || "Upload",
+          imageSrc: imageUrl,
+          dominantColor: data.dominant,
+          createdAt: new Date().toISOString()
+        });
       } catch (e) {
         setError(e.message || "Couldn’t get suggestions.");
       } finally {
@@ -81,8 +92,7 @@ export default function ComboSuggestions({ imageFile }) {
         <DominantColor imageUrl={imageUrl} dominant={dominant} palette={palette} />
 
         {/* RIGHT SIDE: combos + Myntra */}
-        <ColorPallet loading={loading} error={error} colorApiPalette={colorApiPalette} neutrals={neutrals} myntraLinks={myntraLinks}/>
-      
+        <ColorPallet loading={loading} error={error} colorApiPalette={colorApiPalette} neutrals={neutrals} myntraLinks={myntraLinks} />
       </div>
     </div>
   );

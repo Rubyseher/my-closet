@@ -15,7 +15,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../../../assets/attiro.png";
-import useClosetHistory  from "./useClosetHistory";
+import useClosetHistory from "./useClosetHistory";
 
 const drawerWidth = 200;
 function ResponsiveDrawer(props) {
@@ -60,40 +60,32 @@ function ResponsiveDrawer(props) {
         ) : (
           history.map((item) => (
             <ListItem key={item.id} disablePadding>
-              <ListItemButton onClick={() => console.log("select history", item)}>
+              <ListItemButton onClick={() => console.log("select history", item)}
+                >
                 <Box
                   sx={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 1,
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
                     overflow: "hidden",
-                    mr: 1,
+                    mr: 1.5,
                     backgroundColor: "#2a2a2a",
                     border: "1px solid #333",
+                    flexShrink: 0,
                   }}
                 >
                   {item.imageSrc ? (
-                    <img src={item.imageSrc} alt={item.label || "History item"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <img
+                      src={item.imageSrc}
+                      alt={item.label || "History item"}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
                   ) : null}
                 </Box>
                 <ListItemText
                   primary={item.label || "Unnamed upload"}
-                  secondary={new Date(item.createdAt).toLocaleString()}
                   primaryTypographyProps={{ noWrap: true }}
-                  secondaryTypographyProps={{ noWrap: true }}
                 />
-                {item.dominantColor ? (
-                  <Box
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: "50%",
-                      backgroundColor: item.dominantColor,
-                      border: "1px solid #444",
-                      ml: 1,
-                    }}
-                  />
-                ) : null}
               </ListItemButton>
             </ListItem>
           ))

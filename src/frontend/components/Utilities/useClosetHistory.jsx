@@ -40,7 +40,7 @@ export default function useClosetHistory() {
 
   return {
     history: state.history,
-    addEntry: (payload) => dispatch({ type: "ADD_ENTRY", payload }),
+    addHistory: (payload) => dispatch({ type: "ADD_ENTRY", payload }),
     deleteEntry: (id) => dispatch({ type: "DELETE_ENTRY", id }),
     clearHistory: () => dispatch({ type: "CLEAR_HISTORY" }),
   };
