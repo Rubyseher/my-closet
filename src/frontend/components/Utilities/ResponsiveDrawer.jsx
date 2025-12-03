@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -16,27 +17,53 @@ import Typography from "@mui/material/Typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../../../assets/logo.svg";
 import useClosetHistory from "./useClosetHistory";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Menu from "@mui/material/Menu";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
 
 const drawerWidth = 200;
 function ResponsiveDrawer(props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isClosing, setIsClosing] = React.useState(false);
-  const { history } = useClosetHistory();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const { history, togglePin, deleteEntry } = useClosetHistory();
+  const [itemMenu, setItemMenu] = useState({ anchorEl: null, id: null });
+  const itemMenuOpen = Boolean(itemMenu.anchorEl);
+  console.log("itemMenuOpen", itemMenuOpen);
 
   const handleDrawerClose = () => {
     setIsClosing(true);
     setMobileOpen(false);
   };
-
+  const handleDrawerToggle = () => {
+    if (!isClosing) {
+      setMobileOpen((open) => !open);
+    }
+  };
+  const handleItemMenuOpen = (event, id) => {
+    event.stopPropagation();
+    setItemMenu({ anchorEl: event.currentTarget, id });
+  };
   const handleDrawerTransitionEnd = () => {
     setIsClosing(false);
   };
 
-  const handleDrawerToggle = () => {
-    if (!isClosing) {
-      setMobileOpen(!mobileOpen);
+  const handleItemMenuClose = () => {
+    setItemMenu({ anchorEl: null, id: null });
+  };
+  const handlePinClick = () => {
+    if (itemMenu.id) {
+      togglePin(itemMenu.id);
     }
+    handleItemMenuClose();
+  };
+  const handleDeleteClick = () => {
+    if (itemMenu.id) {
+      deleteEntry(itemMenu.id);
+    }
+    handleItemMenuClose();
   };
 
   const drawer = (
@@ -60,8 +87,7 @@ function ResponsiveDrawer(props) {
         ) : (
           history.map((item) => (
             <ListItem key={item.id} disablePadding>
-              <ListItemButton onClick={() => console.log("select history", item)}
-                >
+              <ListItemButton onClick={() => console.log("select history", item)}>
                 <Box
                   sx={{
                     width: 32,
@@ -75,17 +101,15 @@ function ResponsiveDrawer(props) {
                   }}
                 >
                   {item.imageSrc ? (
-                    <img
-                      src={item.imageSrc}
-                      alt={item.label || "History item"}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
+                    <img src={item.imageSrc} alt={item.label || "History item"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   ) : null}
                 </Box>
-                <ListItemText
-                  primary={item.label || "Unnamed upload"}
-                  primaryTypographyProps={{ noWrap: true }}
-                />
+                <ListItemText primary={item.label || "Unnamed upload"} primaryTypographyProps={{ noWrap: true }} />
+                <Tooltip title="Actions">
+                  <IconButton size="small" edge="end" onClick={(event) => handleItemMenuOpen(event, item.id)}>
+                    <MoreHorizIcon sx={{color:'white'}}/>
+                  </IconButton>
+                </Tooltip>
               </ListItemButton>
             </ListItem>
           ))
@@ -108,9 +132,6 @@ function ResponsiveDrawer(props) {
         }}
       >
         <Toolbar>
-          <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: "none" } }}>
-            <MenuIcon />
-          </IconButton>
           <Typography variant="h6" noWrap component="div">
             <Box
               sx={{
@@ -164,6 +185,17 @@ function ResponsiveDrawer(props) {
       <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
         <Toolbar />
       </Box>
+      <Menu
+        anchorEl={itemMenu.anchorEl}
+        open={itemMenuOpen}
+        onClose={handleItemMenuClose}
+        slotProps={{
+          list: { "aria-labelledby": itemMenu.id ? `item-menu-${itemMenu.id}` : undefined },
+        }}
+      >
+        <MenuItem onClick={handlePinClick}>{history.find((h) => h.id === itemMenu.id)?.pinned ? "Unpin" : "Pin"}</MenuItem>
+        <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
+      </Menu>
     </Box>
   );
 }

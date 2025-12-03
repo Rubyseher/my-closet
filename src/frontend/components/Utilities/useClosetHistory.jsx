@@ -17,7 +17,7 @@ function historyReducer(state, action) {
     case "ADD_ENTRY": {
       const incoming = {
         pinned: false,
-        createdAt: action.payload.createdAt || new Date().toISOString(),
+        createdAt: action.payload?.createdAt || new Date().toISOString(),
         ...action.payload,
       };
       const existing = state.history.filter((h) => h.id !== incoming.id);
@@ -26,8 +26,12 @@ function historyReducer(state, action) {
     }
     case "DELETE_ENTRY":
       return { ...state, history: state.history.filter((h) => h.id !== action.id) };
-    case "CLEAR_HISTORY":
-      return { ...state, history: [] };
+    case "PIN_ENTRY": {
+      const next = state.history.map((h) => (h.id === action.id ? { ...h, pinned: !h.pinned } : h));
+      const pinned = next.filter((h) => h.pinned);
+      const unpinned = next.filter((h) => !h.pinned);
+      return { ...state, history: [...pinned, ...unpinned] };
+    }
     default:
       return state;
   }
@@ -42,6 +46,6 @@ export default function useClosetHistory() {
     history: state.history,
     addHistory: (payload) => dispatch({ type: "ADD_ENTRY", payload }),
     deleteEntry: (id) => dispatch({ type: "DELETE_ENTRY", id }),
-    clearHistory: () => dispatch({ type: "CLEAR_HISTORY" }),
+    togglePin: (id) => dispatch({ type: "PIN_ENTRY" ,id}),
   };
 }
