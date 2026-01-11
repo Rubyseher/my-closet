@@ -26,15 +26,6 @@ export default function ComboSuggestions({ imageFile }) {
     previewImage.current = newUrl;
     setImageUrl(newUrl);
 
-    // Immediately add to sidebar history with the preview URL
-    addHistory({
-      id: newId,
-      label: imageFile.name || "Upload",
-      imageSrc: newUrl,
-      dominantColor: null,
-      createdAt: new Date().toISOString(),
-    });
-
     // cleanup function runs when imageFile changes or component unmounts
     return () => {
       URL.revokeObjectURL(newUrl);
@@ -81,13 +72,18 @@ export default function ComboSuggestions({ imageFile }) {
 
         const id = historyIdRef.current || (crypto?.randomUUID && crypto.randomUUID()) || `${imageFile.name}-${imageFile.lastModified}`;
 
-        addHistory({
-          id,
-          label: imageFile.name || "Upload",
-          imageSrc: previewImage.current,
-          dominantColor: data.dominantColor || data.dominant,
-          createdAt: new Date().toISOString(),
-        });
+        // Convert image to Base64 for persistent storage
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          addHistory({
+            id,
+            label: imageFile.name || "Upload",
+            imageSrc: e.target.result, // Base64 string instead of temporary URL
+            dominantColor: data.dominantColor || data.dominant,
+            createdAt: new Date().toISOString(),
+          });
+        };
+        reader.readAsDataURL(imageFile);
       } catch (e) {
         setError(e.message || "Couldn’t get suggestions.");
       } finally {
