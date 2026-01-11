@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../styles/comboSuggestions.css";
 import DominantColor from "./DominantColor";
 import ColorPallet from "./ColorPallet";
@@ -14,15 +14,32 @@ export default function ComboSuggestions({ imageFile }) {
   const [neutrals, setNeutrals] = useState(null);
   const [myntraLinks, setMyntraLinks] = useState([]);
   const { addHistory } = useClosetHistory();
+  const previewImage = useRef(null);
+  const historyIdRef = useRef(null);
 
   // 1) Preview effect
   useEffect(() => {
     if (!imageFile) return;
+    const newId = (crypto?.randomUUID && crypto.randomUUID()) || `${imageFile.name}-${imageFile.lastModified}`;
     const newUrl = URL.createObjectURL(imageFile);
+    historyIdRef.current = newId;
+    previewImage.current = newUrl;
     setImageUrl(newUrl);
+
+    // Immediately add to sidebar history with the preview URL
+    addHistory({
+      id: newId,
+      label: imageFile.name || "Upload",
+      imageSrc: newUrl,
+      dominantColor: null,
+      createdAt: new Date().toISOString(),
+    });
+
     // cleanup function runs when imageFile changes or component unmounts
     return () => {
       URL.revokeObjectURL(newUrl);
+      previewImage.current = null;
+      historyIdRef.current = null;
     };
   }, [imageFile]);
 
@@ -62,14 +79,14 @@ export default function ComboSuggestions({ imageFile }) {
         setNeutrals(data.combos || null);
         setMyntraLinks(Array.isArray(data.myntra) ? data.myntra : []);
 
-        const id = (crypto?.randomUUID && crypto.randomUUID()) || `${imageFile.name}-${imageFile.lastModified}`;
+        const id = historyIdRef.current || (crypto?.randomUUID && crypto.randomUUID()) || `${imageFile.name}-${imageFile.lastModified}`;
 
         addHistory({
           id,
           label: imageFile.name || "Upload",
-          imageSrc: imageUrl,
-          dominantColor: data.dominant,
-          createdAt: new Date().toISOString()
+          imageSrc: previewImage.current,
+          dominantColor: data.dominantColor || data.dominant,
+          createdAt: new Date().toISOString(),
         });
       } catch (e) {
         setError(e.message || "Couldn’t get suggestions.");

@@ -24,7 +24,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "bootstrap": "^5.3.8",
     "cors": "^2.8.5",
-    "express": "^5.1.0",
+    "express": "^4.22.1",
     "multer": "^2.0.2",
     "node-vibrant": "^4.0.3",
     "react": "^18.2.0",
@@ -34,7 +34,8 @@
     "react-helmet-async": "^2.0.5",
     "react-router-dom": "^7.9.5",
     "sharp": "^0.34.5",
-    "tinycolor2": "^1.6.0"
+    "tinycolor2": "^1.6.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

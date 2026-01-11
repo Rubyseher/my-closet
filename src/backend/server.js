@@ -2,11 +2,11 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import sharp from "sharp";
-import {pickDominantSwatch,swatchToHex,fashionCombosFrom,buildMyntraLinks,fetchColorSchemes} from './utilities.js'
+import { pickDominantSwatch, swatchToHex, fashionCombosFrom, buildMyntraLinks, fetchColorSchemes } from './utilities.js'
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { Vibrant } = require("node-vibrant/node");
-
+import { emitStatus } from "./ws-server.js";
 const app = express();
 
 // 1) CORS ONLY
@@ -24,29 +24,31 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "image required" });
 
+    const uploadId = crypto.randomUUID();
+    emitStatus({ uploadId, stage: "resizing" });
+
     const thumbBuf = await sharp(req.file.buffer)
       .rotate()
       .resize({ width: 512, withoutEnlargement: true })
       .toBuffer();
 
     const hexes = [];
-
+    emitStatus({ uploadId, stage: "finding-colors" });
     // ---- NEW DOMINANT LOGIC ----
     const palette = await Vibrant.from(thumbBuf).getPalette();
-
     const mainSwatch = pickDominantSwatch(palette);
     const dominant = swatchToHex(mainSwatch) || "#808080";
 
     // CLEAN HEX for API
-    const colorApiSchemes= await fetchColorSchemes(dominant)
+    emitStatus({ uploadId, stage: "building-links" });
+    const colorApiSchemes = await fetchColorSchemes(dominant)
     const colorApiPalette = colorApiSchemes || {}
-
     // ---- NEW FASHION COMBOS ----
     const combos = fashionCombosFrom(dominant, "women");
-
     // ---- UPDATED MYNTRA URL ----
     const myntra = buildMyntraLinks(dominant, "women");
-
+    
+    emitStatus({ uploadId, stage: "done" });
     // ---- SEND RESPONSE ----
     res.json({
       dominantColor: dominant,
