@@ -6,11 +6,11 @@ import { pickDominantSwatch, swatchToHex, fashionCombosFrom, buildMyntraLinks, f
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { Vibrant } = require("node-vibrant/node");
-import { emitStatus } from "./ws-server.js";
+import { emitStatus, initWebSocket } from "./ws-server.js";
 const app = express();
 
 // 1) CORS ONLY
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
 console.log(">>> RUNNING SERVER VERSION: v5 <<<");
 
 // 2) Multer should be defined early
@@ -68,4 +68,6 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
 // 4) JSON parsing AFTER file uploads
 app.use(express.json());
 // --- start server ---
-app.listen(4000, () => console.log("API on http://localhost:4000"));
+const PORT = process.env.PORT || 8080;
+const server = app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+initWebSocket(server);
