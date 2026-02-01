@@ -55,7 +55,7 @@ export default function ComboSuggestions({ imageFile }) {
         }
         console.log("sending:", imageFile?.name, imageFile?.type, imageFile?.size);
 
-        const res = await fetch("http://localhost:4000/api/suggest/image", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/suggest/image`, {
           method: "POST",
           body: formData, // do NOT set Content-Type
         });

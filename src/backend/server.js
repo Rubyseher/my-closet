@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import sharp from "sharp";
+import crypto from "crypto";
 import { pickDominantSwatch, swatchToHex, fashionCombosFrom, buildMyntraLinks, fetchColorSchemes } from './utilities.js'
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
@@ -10,7 +11,10 @@ import { emitStatus, initWebSocket } from "./ws-server.js";
 const app = express();
 
 // 1) CORS ONLY
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
+console.log("Allowed CORS Origin:", allowedOrigin);
+app.use(cors({ origin: allowedOrigin }));
+
 console.log(">>> RUNNING SERVER VERSION: v5 <<<");
 
 // 2) Multer should be defined early
@@ -64,6 +68,14 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
   }
 });
 
+// Add a GET route for the same path to help debugging
+app.get("/api/suggest/image", (req, res) => {
+  res.send("This endpoint is working, but you must send a POST request with an image to use it.");
+});
+
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
 
 // 4) JSON parsing AFTER file uploads
 app.use(express.json());
