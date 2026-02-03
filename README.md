@@ -1,16 +1,73 @@
-# React + Vite
+# 👗 Attiro — Personalized Color Recommendation Engine
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Solving the _“What should I wear?”_ bug with React, Redux, and TypeScript.**
 
-Currently, two official plugins are available:
+Most people see a color mismatch; I saw a **state management challenge**.  
+**Attiro** is a web application that bridges aesthetic design with technical logic by generating **personalized outfit color palettes** from user-uploaded images and linking them directly to shoppable products.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+🔗 **[Check out the Live App](https://attiro-frontend.onrender.com)**  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ✨ Key Features
+
+### 🎨 Real-time Color Analysis
+Upload an image and receive a dynamically generated color palette tailored to the user’s profile.
+
+### 🛍️ “Look to Shop” Flow
+Recommended color palettes are mapped to **real-time Myntra product links**, enabling a seamless transition from inspiration to purchase.
+
+### 🧾 Outfit History
+A persistent log of previously generated recommendations and user preferences for easy revisit.
+
+### 📱 Responsive UI
+Mobile-first, responsive design optimized for the morning rush.
+
+---
+
+## 🛠️ Technical Highlights
+
+### 🛡️ Type Safety with TypeScript
+The entire codebase is written in **TypeScript** to ensure scalability and predictability.
+
+- Strict interfaces for user preferences and color data
+- Reduced runtime errors
+- Improved developer experience and maintainability
+
+---
+
+### 🔌 State Management with Redux
+Handling outfit history and global user preferences required a robust state solution. **Redux / Redux Toolkit** is used to:
+
+- Maintain a **single source of truth** for the user’s *Color Profile*
+- Manage asynchronous API states during image processing
+- Ensure consistency across multiple views of the application
+
+---
+
+### 🎨 Dynamic UI & API Integration
+- Custom logic to map extracted **HEX color codes** to outfit categories
+- Integrated external shopping links to convert static recommendations into actionable results
+
+---
+
+## 🧱 Tech Stack
+
+| Category            | Technologies                          |
+|---------------------|---------------------------------------|
+| Frontend            | React                                 |
+| State Management    | Redux, Redux Toolkit                  |
+| Language            | TypeScript                            |
+| Styling             | CSS3, Tailwind CSS                   |
+
+---
+
+## 🏗️ Getting Started
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/your-username/attiro.git
