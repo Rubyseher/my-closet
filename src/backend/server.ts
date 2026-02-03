@@ -1,13 +1,13 @@
-import express from "express";
+import express, { type Request, type Response } from "express";
 import cors from "cors";
 import multer from "multer";
 import sharp from "sharp";
 import crypto from "crypto";
-import { pickDominantSwatch, swatchToHex, fashionCombosFrom, buildMyntraLinks, fetchColorSchemes } from './utilities.js'
+import { pickDominantSwatch, swatchToHex, fashionCombosFrom, buildMyntraLinks, fetchColorSchemes } from './utilities.ts';
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { Vibrant } = require("node-vibrant/node");
-import { emitStatus, initWebSocket } from "./ws-server.js";
+import { emitStatus, initWebSocket } from "./ws-server.ts";
 const app = express();
 
 // 1) CORS ONLY
@@ -24,7 +24,7 @@ const upload = multer({
 });
 
 // 3) FILE ROUTE FIRST
-app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
+app.post("/api/suggest/image", upload.single("image"), async (req: Request, res: Response) => {
   try {
     if (!req.file) return res.status(400).json({ error: "image required" });
 
@@ -36,9 +36,10 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
       .resize({ width: 512, withoutEnlargement: true })
       .toBuffer();
 
-    const hexes = [];
+    const hexes: string[] = [];
     emitStatus({ uploadId, stage: "finding-colors" });
     // ---- NEW DOMINANT LOGIC ----
+    // node-vibrant doesn't have official types, so TypeScript infers 'any' for Vibrant
     const palette = await Vibrant.from(thumbBuf).getPalette();
     const mainSwatch = pickDominantSwatch(palette);
     const dominant = swatchToHex(mainSwatch) || "#808080";
@@ -69,17 +70,17 @@ app.post("/api/suggest/image", upload.single("image"), async (req, res) => {
 });
 
 // Add a GET route for the same path to help debugging
-app.get("/api/suggest/image", (req, res) => {
+app.get("/api/suggest/image", (req: Request, res: Response) => {
   res.send("This endpoint is working, but you must send a POST request with an image to use it.");
 });
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Backend is running!");
 });
 
 // 4) JSON parsing AFTER file uploads
 app.use(express.json());
 // --- start server ---
-const PORT = process.env.PORT || 8080;
+const PORT: string | number = process.env.PORT || 8080;
 const server = app.listen(PORT, () => console.log(`API running on port ${PORT}`));
 initWebSocket(server);

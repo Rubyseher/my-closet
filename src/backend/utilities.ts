@@ -10,17 +10,22 @@ const COLOR_API_MODES = [
   "quad",
 ];
 
-function pickDominantSwatch(palette) {
+// The 'node-vibrant' library returns a palette object where keys are swatch names
+// and values are Swatch objects or null.
+interface Swatch {
+  population: number;
+  // other properties like rgb, hex, etc.
+  [key: string]: any;
+}
+
+function pickDominantSwatch(palette: { [key: string]: Swatch | null }): Swatch | null {
   const swatches = Object.values(palette).filter(Boolean);
   if (!swatches.length) return null;
 
-  return swatches.reduce((best, s) => {
-    if (!best) return s;
-    return s.population > best.population ? s : best;
-  }, null);
+  return swatches.reduce((best, s) => (s.population > best.population ? s : best));
 }
 
-async function fetchColorSchemes(hex, modes = COLOR_API_MODES, count = 6) {
+async function fetchColorSchemes(hex: string, modes: string[] = COLOR_API_MODES, count: number = 6): Promise<{ [key: string]: string[] }> {
   const cleanHex = hex.replace("#", "");
 
   const getAllColorAPIData = await Promise.allSettled(
@@ -29,29 +34,29 @@ async function fetchColorSchemes(hex, modes = COLOR_API_MODES, count = 6) {
 
       if (!res.ok) throw new Error(`color api mode failed: ${mode}`)
       const data = await res.json()
-      // console.log(data);
 
       const extractedColors = (data.colors || []).map((color) => color.hex.value)
-      // console.log(extractedColors);
 
       return { mode,extractedColors };
     })
   )
 
-  const finalColors = getAllColorAPIData.reduce((colors,result, index) => {
-    const mode= modes[index]
-    if(result.status=="fulfilled")
-      colors[mode]= result.value.extractedColors
-    else colors[mode]=[]
-    return colors
-  },{})
-  // console.log(finalColors)
+  const finalColors = getAllColorAPIData.reduce((colors, result, index) => {
+    const mode = modes[index];
+    if (result.status === "fulfilled" && result.value) {
+      colors[mode] = result.value.extractedColors;
+    } else {
+      colors[mode] = [];
+    }
+    return colors;
+  }, {} as { [key: string]: string[] });
+
   return finalColors
 
 }
 
 // --- helper functions ---
-function swatchToHex(s) {
+function swatchToHex(s: Swatch | null): string | null {
   if (!s) return null;
 
   // Handle newer Vibrant: swatches have .rgb array
@@ -80,7 +85,7 @@ function swatchToHex(s) {
   return tinycolor(s).toHexString();
 }
 
-function simpleColorName(hex) {
+function simpleColorName(hex: string): string {
   const c = tinycolor(hex).toHsl();
   if (!c) return "neutral";
 
@@ -111,11 +116,12 @@ function simpleColorName(hex) {
 }
 
 
-function fashionCombosFrom(hex, gender = "women") {
+function fashionCombosFrom(hex: string, gender: "women" | "men" = "women") {
   const base = tinycolor(hex);
   const hsl = base.toHsl();
   const isDark = base.isDark();
   const isPastel = hsl.l > 0.65 && hsl.s > 0.2; // light & a bit colorful
+  const isMen: boolean = gender === "men";
 
   // Neutrals for bottoms
   const DARK_NEUTRALS = [
@@ -144,22 +150,26 @@ function fashionCombosFrom(hex, gender = "women") {
     "#111827",   // black
   ];
 
-  const harmoniousTop = base
-    .clone()
-    .lighten(20)
-    .desaturate(20)
-    .toHexString();
+  let harmoniousTop: string, contrastTop: string, mutedEarthTop: string;
 
-  const contrastTop = base
-    .clone()
-    .complement()
-    .desaturate(20)
-    .lighten(5)
-    .toHexString();
+  if (isMen) {
+    // Men: more desaturated, toned down
+    harmoniousTop = base.clone().lighten(10).desaturate(40).toHexString();
+    contrastTop = base.clone().complement().desaturate(40).darken(10).toHexString();
+    mutedEarthTop = tinycolor.mix(base, "#78716c", 50).toHexString(); // stone/greige mix
+  } else {
+    // Women: existing logic
+    harmoniousTop = base.clone().lighten(20).desaturate(20).toHexString();
+    contrastTop = base
+      .clone()
+      .complement()
+      .desaturate(20)
+      .lighten(5)
+      .toHexString();
+    mutedEarthTop = tinycolor.mix(base, "#c4a484", 40).toHexString(); // beige/sand mix
+  }
 
-  const mutedEarthTop = tinycolor.mix(base, "#c4a484", 40).toHexString(); // beige/sand mix
-
-  const tops = [
+  const tops: { hex: string; name: string }[] = [
     ...TOP_NEUTRALS.map((h) => ({ hex: h, name: simpleColorName(h) })),
     { hex: harmoniousTop, name: simpleColorName(harmoniousTop) },
     { hex: contrastTop, name: simpleColorName(contrastTop) },
@@ -167,9 +177,24 @@ function fashionCombosFrom(hex, gender = "women") {
   ];
 
   // --- BOTTOMS LOGIC ---
-  let bottomHexes;
+  let bottomHexes: string[];
 
-  if (isDark) {
+  if (isMen) {
+    // Men's bottoms: generally darker, safer neutrals
+    if (isDark) {
+      // Dark top -> Khaki, Grey, Light Grey
+      bottomHexes = ["#d1b892", "#9ca3af", "#e5e7eb", "#4b5563", "#1f2937"];
+    } else {
+      // Light/Mid top -> Navy, Black, Charcoal
+      bottomHexes = [
+        "#111827", // black
+        "#1f2937", // charcoal
+        "#1e3a8a", // navy
+        "#374151", // dark grey
+        "#78716c", // stone
+      ];
+    }
+  } else if (isDark) {
     // Dark top → suggest light & mid bottoms, with one dark option
     bottomHexes = [
       LIGHT_NEUTRALS[0], // near white
@@ -206,7 +231,7 @@ function fashionCombosFrom(hex, gender = "women") {
     .toHexString();
   bottomHexes.push(toneOnToneBottom);
 
-  const bottoms = bottomHexes.map((h) => ({
+  const bottoms: { hex: string; name: string }[] = bottomHexes.map((h) => ({
     hex: h,
     name: simpleColorName(h),
   }));
@@ -231,7 +256,7 @@ function fashionCombosFrom(hex, gender = "women") {
 
   const shoeHexes = [...SHOE_NEUTRALS, shoeMatchTop];
 
-  const shoes = shoeHexes.map((h) => ({
+  const shoes: { hex: string; name: string }[] = shoeHexes.map((h) => ({
     hex: h,
     name: simpleColorName(h),
   }));
@@ -244,7 +269,7 @@ function fashionCombosFrom(hex, gender = "women") {
   };
 }
 
-function makeMyntraUrl(colorName, who, itemType) {
+function makeMyntraUrl(colorName: string, who: string, itemType: string): string {
   // slug part: beige-women-top
   const slug = `${colorName}-${who}-${itemType}`
     .trim()
@@ -258,7 +283,7 @@ function makeMyntraUrl(colorName, who, itemType) {
 }
 
 
-function buildMyntraLinks(hex, gender = "women") {
+function buildMyntraLinks(hex: string, gender: "women" | "men" = "women"): { category: string; url: string }[] {
   const who = gender === "men" ? "men" : "women";
 
   const colorName = simpleColorName(hex); // e.g. "dark green", "black", "beige"
